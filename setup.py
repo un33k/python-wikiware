@@ -14,9 +14,9 @@ url = 'https://github.com/un33k/python-wikiware'
 author = 'Val Neekman'
 author_email = 'info@neekware.com'
 license = 'BSD'
-install_requires = ['']
+install_requires = ['requests>=1.2.3']
 classifiers = [
-    'Development Status :: 4 - Beta',
+    'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
     'License :: OSI Approved :: BSD License',
     'Operating System :: POSIX',
