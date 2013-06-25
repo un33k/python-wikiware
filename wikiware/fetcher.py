@@ -1,5 +1,5 @@
 import sys
-import requests as rqst
+import requests
 
 import defaults
 
@@ -27,7 +27,7 @@ class WikiwareFetch(object):
     def fetch(self):
         """ dump Wikipedia article """
 
-        r = rqst.get(self.url, params=self.params, headers=self.headers)
+        r = requests.get(self.url, params=self.params, headers=self.headers)
         return r.text
 
 
