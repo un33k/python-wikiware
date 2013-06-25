@@ -1,79 +1,57 @@
 import re
-import requests as rqst
+import HTMLParser
 
 from pydry.string import str_serialize_clean
 from pydry.string import str_find_between_regex
 
 import defaults
-
-remove_parentheses_pattern = re.compile(
-    # Remove anything between parentheses including parentheses, even nested parentheses
-    "\("            # Match a ( char
-    ".*?"           # Match any char one or more times, lazy = as few as possible
-    "[^\(]"         # Match anything other than a ( char
-    "."             # Match any char
-    "\)"            # Match a ) char
-)
-
-remove_right_angled_brackets_pattern = re.compile(
-    # Remove double angled brackets and | and anything in between. Before: [[ United States | USA ]] After: USA ]]
-    "\[\["          # Match [[
-    "[^\]]"         # Match anything other than a ( char
-    "*?"            # Match any char one or more times, lazy = as few as possible
-    "\|"            # Match a | char
-)
-
-remove_short_ref_pattern = re.compile(
-    # Remove shorthand <ref / >. Before: <ref name=City /> After: 
-    "<\s*ref"       # Match <ref or < ref
-    "[^>]"          # Match anything but >
-    "*?"            # Match Previous char one or more times
-    "\/>"           # Match />
-)
-
-remove_long_ref_pattern = re.compile(
-    # Remove long <ref></ref>. Before: <ref>some text</ref> After: 
-    "<\s*ref"       # Match <ref or < ref
-    "[^>*]"         # Match anything but >
-    "*>"            # Match any char followed by >
-    ".*?"           # Match Previous char one or more times
-    "</ref>"        # Match />
-)
-
-remove_html_comment_pattern = re.compile(
-    # Remote html comment <!-- comments -->
-    "\<!--"         # Match <!--
-    ".*?"           # Lazy Match any char
-    "--\>"          # Match -->
-)
-
-remove_curly_brackets_pattern = re.compile(
-    # Remote {{ something }}
-    "\{\{"          # Match {{
-    ".*?"           # Lazy Match any char
-    "[^\}\}]"       # Match anything but }
-    "\}\}"          # Match }}
-)
+from patterns import *
 
 class WikiwareParse(object):
     """ Parse Wikipedia contents """
 
-    def parse(self, content, fmt='txt'):
+    def __init__(self, content, format='txt'):
+        self.content = content
+        self.format = format
+
+    def serialize(self, text):
+        txt = str_serialize_clean(text)
+        return txt
+
+    def unescape(self, text):
+        txt = HTMLParser.HTMLParser().unescape(text)
+        return txt
+
+    def cleanup(self, text):
+        txt = text.replace("'''", '')
+        txt = remove_html_comment_pattern.sub('', txt)
+        txt = remove_parentheses_pattern.sub('', txt)
+        txt = remove_right_angled_brackets_pattern.sub('', txt)
+        txt = remove_double_angled_brackets_pattern.sub('', txt)
+        txt = remove_short_ref_pattern.sub('', txt)
+        txt = remove_long_ref_pattern.sub('', txt)
+        txt = remove_curly_brackets_pattern.sub('', txt)
+        txt = self.serialize(txt)
+        return txt
+
+    def summary_raw(self, text):
+        txt = str_find_between_regex(text, start="'''",  end="==")
+        return txt
+
+    def summary(self, text):
+        txt = self.summary_raw(text)
+        txt = self.unescape(txt)
+        txt = self.serialize(txt)
+        return self.cleanup(txt)
+
+    def infobox_raw(self, text):
+        infobox = str_find_between_regex(txt, start='{{Infobox',  end="'''", case=False)
+        return infobox
+
+    def parse(self):
         """ parser content """
 
-        txt = str_serialize_clean(content)
-        infobox = str_find_between_regex(txt, start='{{Infobox',  end="'''", case=False)
-
-        summary = str_find_between_regex(txt, start="'''",  end="==")
-        summary = summary.replace("'''", '')
-        summary = remove_html_comment_pattern.sub('', summary)
-        summary = remove_parentheses_pattern.sub('', summary)
-        summary = remove_right_angled_brackets_pattern.sub('', summary)
-        summary = summary.replace(']]', '').replace('[[', '')
-        summary = remove_short_ref_pattern.sub('', summary)
-        summary = remove_long_ref_pattern.sub('', summary)
-        summary = remove_curly_brackets_pattern.sub('', summary)
-        print summary
+        print self.summary(self.content)
 
 
 
