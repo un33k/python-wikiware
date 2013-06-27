@@ -53,11 +53,15 @@ class WikiwareParse(object):
         txt = reference_number_pattern.sub('', text)
         return txt
 
+    def clean_converts(self, text):
+        txt = convert_pattern.sub("\\1 \\2", text)
+        return txt
+
     def clean(self, text):
         txt = text.replace("'''", '')
         txt = comma_pattern.sub(', ', txt)
         txt = dot_pattern.sub('. ', txt)
-        txt = double_single_qoute.sub('"', txt)
+        txt = double_single_qoute_pattern.sub('"', txt)
         txt = self.clean_html_comments(txt)
         txt = self.serialize(txt)
         return txt
@@ -75,6 +79,7 @@ class WikiwareParse(object):
         txt = self.get_summary_block(text)
         txt = self.unescape(txt)
         txt = self.serialize(txt)
+        txt = self.clean_converts(txt)
         txt = self.clean_language_brackets(txt)
         txt = self.clean_parentheses(txt)
         txt = self.clean_ref_tags(txt)

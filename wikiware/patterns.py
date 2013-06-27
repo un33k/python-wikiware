@@ -34,7 +34,7 @@ comma_pattern = re.compile(" {1,}\,")
 dot_pattern = re.compile(" {1,}\.")
 
 # match the start of the infobox
-infobox_start_pattern = re.compile("\{\{\s*infobox", re.IGNORECASE)
+infobox_start_pattern = re.compile("\{\{\s*infobox", re.I)
 
 # match the end of infobox
 infobox_end_pattern = re.compile("\}\}\s*'''")
@@ -52,6 +52,10 @@ language_translation_pattern = re.compile("{{\s*lang\|.*?\|")
 reference_number_pattern = re.compile("\{\{\s*refn.*?\}\}")
 
 # match double single qoute " '' "
-double_single_qoute = re.compile("\'\'")
+double_single_qoute_pattern = re.compile("\'\'")
+
+# match convert template
+convert_pattern = re.compile("\{\{\s*convert\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|.*?\}\}", re.I)
+
 
 
