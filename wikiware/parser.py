@@ -44,7 +44,7 @@ class WikiwareParse(object):
         txt = html_comment_pattern.sub('', text)
         return txt
 
-    def cleanup(self, text):
+    def clean(self, text):
         txt = text.replace("'''", '')
         txt = comma_pattern.sub(', ', txt)
         txt = dot_pattern.sub('. ', txt)
@@ -52,14 +52,17 @@ class WikiwareParse(object):
         txt = self.serialize(txt)
         return txt
 
-    def summary_raw(self, text):
-        txt = str_find_between_regex(text, start="'''",  end="==")
+    def get_summary_block(self, text):
+        start, end = 'summary_start', 'summary_end'
+        txt = summary_start_pattern.sub(start, text)
+        txt = summary_end_pattern.sub(end, txt)
+        txt = str_find_between_regex(txt, start=start,  end=end, case=False)
         return txt
 
-    def summary(self, text):
+    def get_summary(self, text):
         """ order is important """
 
-        txt = self.summary_raw(text)
+        txt = self.get_summary_block(text)
         txt = self.unescape(txt)
         txt = self.serialize(txt)
         txt = self.clean_parentheses(txt)
@@ -67,17 +70,21 @@ class WikiwareParse(object):
         txt = self.clean_doubled_angled_brackets(txt)
         txt = self.clean_curly_brackets(txt)
         txt = self.clean_curly_brackets(txt)
-        txt = self.cleanup(txt)
+        txt = self.clean(txt)
         return txt
 
-    def infobox_raw(self, text):
-        infobox = str_find_between_regex(txt, start='{{Infobox',  end="'''", case=False)
-        return infobox
+    def get_infobox(self, text):
+        start, end = 'infobox_start', 'infobox_end'
+        txt = infobox_start_pattern.sub(start, text)
+        txt = infobox_end_pattern.sub(end, txt)
+        txt = str_find_between_regex(txt, start=start,  end=end, case=False)
+        return txt
 
     def parse(self):
         """ parser content """
 
-        print self.summary(self.content)
+        # print self.get_infobox(self.content)
+        print self.get_summary(self.content)
 
 
 
