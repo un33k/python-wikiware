@@ -46,7 +46,7 @@ class WikiwareParse(object):
         return txt
 
     def clean_language_brackets(self, text):
-        txt = language_translation_pattern.sub('', text)
+        txt = language_translation_pattern.sub('\\1', text)
         return txt
 
     def clean_reference_number(self, text):

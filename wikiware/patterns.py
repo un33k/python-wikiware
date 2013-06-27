@@ -46,7 +46,7 @@ summary_start_pattern = infobox_end_pattern
 summary_end_pattern = re.compile("==\s*(.*?)\s*==")
 
 # match language translation
-language_translation_pattern = re.compile("{{\s*lang\|.*?\|")
+language_translation_pattern = re.compile("\{\{\s*lang\s*\|\s*.+?\s*\|\s*(.+?)\s*\}\}")
 
 # match refn "{{refn| anything }}"
 reference_number_pattern = re.compile("\{\{\s*refn.*?\}\}")
