@@ -43,13 +43,15 @@ infobox_end_pattern = re.compile("\}\}\s*'''")
 summary_start_pattern = infobox_end_pattern
 
 # match end of summary
-summary_end_pattern = re.compile("==(.*?)==")
+summary_end_pattern = re.compile("==\s*(.*?)\s*==")
 
 # match language translation
 language_translation_pattern = re.compile("{{\s*lang\|.*?\|")
 
+# match refn "{{refn| anything }}"
+reference_number_pattern = re.compile("\{\{\s*refn.*?\}\}")
 
-
-
+# match double single qoute " '' "
+double_single_qoute = re.compile("\'\'")
 
 
