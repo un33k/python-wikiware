@@ -13,7 +13,16 @@ ref_pattern = re.compile("<\s*ref[^>]*?\/>|<\s*ref[^>*]*>.*?</ref>")
 html_comment_pattern = re.compile("\<!--.*?--\>") 
 
 # match "{{ anything }}" inclusive
-curly_brackets_pattern = re.compile("\{\{.*?[^\}\}]\}\}")
+double_curly_brackets_content_pattern = re.compile("\{\{.*?[^\}\}]\}\}")
+
+# match "{{"
+double_curly_brackets_right_pattern = re.compile("\{\{|\}\}")
+
+# match "}}
+double_curly_brackets_left_pattern = re.compile("\}\}")
+
+# match "{{" or "}}"
+double_curly_brackets_pattern = re.compile("\{\{|\}\}")
 
 # match any "[[" or "]]"
 double_angled_brackets_pattern = re.compile("\[\[|\]\]")
@@ -35,6 +44,10 @@ summary_start_pattern = infobox_end_pattern
 
 # match end of summary
 summary_end_pattern = re.compile("==(.*?)==")
+
+# match language translation
+language_translation_pattern = re.compile("{{\s*lang\|.*?\|")
+
 
 
 

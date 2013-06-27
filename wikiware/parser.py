@@ -37,11 +37,16 @@ class WikiwareParse(object):
         return txt
 
     def clean_curly_brackets(self, text):
-        txt = curly_brackets_pattern.sub('', text)
+        txt = double_curly_brackets_content_pattern.sub('', text)
+        txt = double_curly_brackets_pattern.sub('', text)
         return txt
 
     def clean_html_comments(self, text):
         txt = html_comment_pattern.sub('', text)
+        return txt
+
+    def clean_language_brackets(self, text):
+        txt = language_translation_pattern.sub('', text)
         return txt
 
     def clean(self, text):
@@ -68,7 +73,7 @@ class WikiwareParse(object):
         txt = self.clean_parentheses(txt)
         txt = self.clean_ref_tags(txt)
         txt = self.clean_doubled_angled_brackets(txt)
-        txt = self.clean_curly_brackets(txt)
+        txt = self.clean_language_brackets(txt)
         txt = self.clean_curly_brackets(txt)
         txt = self.clean(txt)
         return txt
