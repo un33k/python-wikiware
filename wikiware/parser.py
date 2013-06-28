@@ -1,18 +1,17 @@
+# -*- coding: utf-8 -*-
+
 import re
 import HTMLParser
+import bleach
 
 from pydry.string import str_serialize_clean
-from pydry.string import str_find_between_regex
+from pydry.string import str_find_between_regex, str_find_between_tags
 
 import defaults
 from patterns import *
 
-class WikiwareParse(object):
-    """ Parse Wikipedia contents """
-
-    def __init__(self, content, format='txt'):
-        self.content = content
-        self.format = format
+class WikiwareParseBase(object):
+    """ Parse Wikipedia base"""
 
     def serialize(self, text):
         txt = str_serialize_clean(text)
@@ -21,6 +20,23 @@ class WikiwareParse(object):
     def unescape(self, text):
         txt = HTMLParser.HTMLParser().unescape(text)
         return txt
+
+    def clean(self, text):
+        txt = text.replace("'''", '')
+        txt = long_dash_pattern.sub(' ', txt)
+        txt = comma_pattern.sub(', ', txt)
+        txt = dot_pattern.sub('. ', txt)
+        txt = double_single_qoute_pattern.sub('"', txt)
+        txt = self.clean_html_comments(txt)
+        txt = self.serialize(txt)
+        return txt
+
+class WikiwareAPIParse(WikiwareParseBase):
+    """ Parse Wikipedia contents from API Calls"""
+
+    def __init__(self, content, format='txt'):
+        self.content = content
+        self.format = format
 
     def clean_parentheses(self, text):
         txt = parentheses_pattern.sub('', text)
@@ -38,7 +54,7 @@ class WikiwareParse(object):
 
     def clean_curly_brackets(self, text):
         txt = double_curly_brackets_content_pattern.sub('', text)
-        txt = double_curly_brackets_pattern.sub('', text)
+        txt = double_curly_brackets_pattern.sub('', txt)
         return txt
 
     def clean_html_comments(self, text):
@@ -53,17 +69,16 @@ class WikiwareParse(object):
         txt = reference_number_pattern.sub('', text)
         return txt
 
+    def clean_dates(self, text):
+        txt = date_template_pattern.sub(' ', text)
+        return txt
+
     def clean_converts(self, text):
         txt = convert_pattern.sub("\\1 \\2", text)
         return txt
 
     def clean(self, text):
-        txt = text.replace("'''", '')
-        txt = comma_pattern.sub(', ', txt)
-        txt = dot_pattern.sub('. ', txt)
-        txt = double_single_qoute_pattern.sub('"', txt)
-        txt = self.clean_html_comments(txt)
-        txt = self.serialize(txt)
+        txt = super(WikiwareAPIParse, self).clean(text)
         return txt
 
     def get_summary_block(self, text):
@@ -80,6 +95,7 @@ class WikiwareParse(object):
         txt = self.unescape(txt)
         txt = self.serialize(txt)
         txt = self.clean_converts(txt)
+        txt = self.clean_dates(txt)
         txt = self.clean_language_brackets(txt)
         txt = self.clean_parentheses(txt)
         txt = self.clean_ref_tags(txt)
@@ -103,6 +119,43 @@ class WikiwareParse(object):
         print self.get_summary(self.content)
 
 
+class WikiwareEnParse(WikiwareParseBase):
+    """ Parse Wikipedia contents from EN site Calls """
+
+    def __init__(self, content, printable='yes'):
+        self.content = content
+        self.printable = format
+
+    def clean_tags(self, text):
+        txt = bleach.clean(text, tags=[], strip=True)
+        return txt
+
+    def clean_cite_tags(self, text):
+        txt = cite_note_pattern.sub('', text)
+        return txt
+
+    def clean(self, text):
+        txt = super(WikiwareEnParse, self).clean(text)
+        return txt
+
+    def get_summary_block(self, text):
+        txt = str_find_between_tags(text, start='="infobox',  end='="toc', case=False)
+        txt = self.unescape(txt)
+        txt = self.serialize(txt)
+        txt = str_find_between_tags(text, start='<p><b>',  end='<table', case=False)
+        return txt
+
+    def get_summary(self, text):
+        txt = self.get_summary_block(text)
+        txt = self.clean_cite_tags(txt)
+        txt = self.clean_tags(txt)
+        return txt
+
+    def parse(self):
+        """ parser content """
+
+        # print self.get_infobox(self.content)
+        print self.get_summary(self.content)
 
 
 

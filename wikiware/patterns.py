@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import re
 
 # match "( and (anything) here )" inclusive
@@ -56,6 +58,19 @@ double_single_qoute_pattern = re.compile("\'\'")
 
 # match convert template
 convert_pattern = re.compile("\{\{\s*convert\s*\|\s*(.+?)\s*\|\s*(.+?)\s*\|.*?\}\}", re.I)
+
+# match cite notes <sup> anything </sup>
+cite_note_pattern = re.compile("\<\s*sup.*?>.*?</\s*sup\s*\>")
+
+# match long dash " – "
+long_dash_pattern = re.compile("\–")
+
+# match date template
+date_template_pattern = re.compile("\{\{[^\{\{]*\|(\d{4})\|(\d{2})\|(\d{2})\s*\}\}")
+
+
+
+
 
 
 
