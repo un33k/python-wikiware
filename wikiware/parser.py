@@ -9,6 +9,7 @@ from pydry.string import str_find_between_regex, str_find_between_tags
 
 import defaults
 from patterns import *
+from utils import clean_wiki_markup
 
 class WikiwareParseBase(object):
     """ Parse Wikipedia base"""
@@ -27,10 +28,19 @@ class WikiwareParseBase(object):
         txt = comma_pattern.sub(', ', txt)
         txt = dot_pattern.sub('. ', txt)
         txt = double_single_qoute_pattern.sub('"', txt)
-        txt = self.clean_html_comments(txt)
         txt = self.serialize(txt)
+        txt = self.clean_html(txt)
         return txt
 
+    def clean_html(self, text):
+        txt = re.sub(r'(?i)&nbsp;', ' ', text)
+        txt = re.sub(r'(?i)<br[ \\]*?>', '\n', txt)
+        txt = re.sub(r'(?m)<!--.*?--\s*>', '', txt)
+        txt = re.sub(r'(?i)<ref[^>]*>[^>]*<\/ ?ref>', '', txt)
+        txt = re.sub(r'(?m)<.*?>', '', txt)
+        txt = re.sub(r'(?i)&amp;', '&', txt)
+        return txt
+        
 class WikiwareAPIParse(WikiwareParseBase):
     """ Parse Wikipedia contents from API Calls"""
 
@@ -55,10 +65,6 @@ class WikiwareAPIParse(WikiwareParseBase):
     def clean_curly_brackets(self, text):
         txt = double_curly_brackets_content_pattern.sub('', text)
         txt = double_curly_brackets_pattern.sub('', txt)
-        return txt
-
-    def clean_html_comments(self, text):
-        txt = html_comment_pattern.sub('', text)
         return txt
 
     def clean_language_brackets(self, text):
@@ -116,8 +122,9 @@ class WikiwareAPIParse(WikiwareParseBase):
         """ parser content """
 
         # print self.get_infobox(self.content)
-        print self.get_summary(self.content)
-
+        txt = self.get_summary(self.content)
+        txt = clean_wiki_markup(txt)
+        print txt
 
 class WikiwareEnParse(WikiwareParseBase):
     """ Parse Wikipedia contents from EN site Calls """
