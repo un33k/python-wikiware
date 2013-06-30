@@ -88,8 +88,9 @@ class WikiwareAPIParse(WikiwareParseBase):
         return txt
 
     def get_summary_block(self, text):
+        txt = html_comment_pattern.sub('', text)
         start, end = 'summary_start', 'summary_end'
-        txt = summary_start_pattern.sub(start, text)
+        txt = summary_start_pattern.sub(start, txt)
         txt = summary_end_pattern.sub(end, txt)
         txt = str_find_between_regex(txt, start=start,  end=end, case=False)
         return txt
@@ -124,7 +125,7 @@ class WikiwareAPIParse(WikiwareParseBase):
         # print self.get_infobox(self.content)
         txt = self.get_summary(self.content)
         txt = clean_wiki_markup(txt)
-        print txt
+        return txt
 
 class WikiwareEnParse(WikiwareParseBase):
     """ Parse Wikipedia contents from EN site Calls """
