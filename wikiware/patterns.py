@@ -3,19 +3,19 @@
 import re
 
 # match "( and (anything) here )" inclusive
-parentheses_pattern = re.compile("\(([^()])+\)")
+parentheses_pattern = re.compile("\([^()]*\)")
 
 # match "[[ anything |" inclusive
 right_angled_brackets_pattern = re.compile("\[\[[^\]]*?\|")
 
 # match "<ref anything />" or "<ref> anything </ref>" inclusive
-ref_pattern = re.compile("<\s*ref[^>]*?\/>|<\s*ref[^>*]*>.*?</ref>")
+ref_pattern = re.compile("(?m)<\s*ref[^>]*?\/>|<\s*ref[^>*]*>.*?</ref>")
 
-# match html comments "<!-- anything -->" inclusive
-html_comment_pattern = re.compile("\<!--.*?--\>") 
+# match html comments "<!-- anything -->" inclusive or <!--- anything --->
+html_comment_pattern = re.compile("(?m)\<!-{1,}[^\<]*-{1,}\>") 
 
 # match "{{ anything }}" inclusive
-double_curly_brackets_content_pattern = re.compile("\{\{.*?[^\}\}]\}\}")
+double_curly_brackets_content_pattern = re.compile("(?m)\{\{.*?[^\}\}]\}\}")
 
 # match "{{"
 double_curly_brackets_right_pattern = re.compile("\{\{|\}\}")
@@ -43,12 +43,16 @@ infobox_end_pattern = re.compile("\}\}\s*'''")
 
 # match start of summary
 summary_start_pattern = infobox_end_pattern
+summary_start_pattern_with_the = re.compile("\}\}[\\n]+The\s*\'\'\'")
 
 # match end of summary
 summary_end_pattern = re.compile("==\s*(.*?)\s*==")
 
 # match language translation
 language_translation_pattern = re.compile("\{\{\s*lang\s*\|\s*.+?\s*\|\s*(.+?)\s*\}\}")
+
+# match (IPA) International Phonetic Alphabet
+ipa_pattern = re.compile("\{\{IPA.*?\}\}")
 
 # match refn "{{refn| anything }}"
 reference_number_pattern = re.compile("\{\{\s*refn.*?\}\}")

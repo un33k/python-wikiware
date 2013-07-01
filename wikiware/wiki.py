@@ -2,8 +2,8 @@ from fetcher import WikiwareFetch
 from parser import WikiwareAPIParse, WikiwareEnParse
 
 if __name__ == '__main__':
-    title = 'Hamadan'
-    format = 'txt'
+    title = 'France'
+    format = 'json'
     fetcher = WikiwareFetch()
     content = fetcher.fetch_api(title=title, format=format)
     parser = WikiwareAPIParse(content=content, format=format)
