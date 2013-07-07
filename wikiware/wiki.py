@@ -1,5 +1,5 @@
 from fetcher import WikiwareFetch
-from parser import WikiwareAPIParse, WikiwareEnParse
+from parser import WikiwareAPIParse
 
 if __name__ == '__main__':
     title = 'France'
@@ -12,9 +12,3 @@ if __name__ == '__main__':
     print "\n\n"
     print text
     print "\n\n"
-
-    # fetch_en = WikiwareFetch()
-    # content = fetcher.fetch_en(title=title)
-    # parser = WikiwareEnParse(content=content)
-    # parser.parse()
-

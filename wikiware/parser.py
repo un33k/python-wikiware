@@ -77,45 +77,5 @@ class WikiwareAPIParse(WikiwareParseBase):
         txt = self.get_summary(self.content)
         return txt
 
-class WikiwareEnParse(WikiwareParseBase):
-    """ Parse Wikipedia contents from EN site Calls """
-
-    def __init__(self, content, printable='yes'):
-        self.content = content
-        self.printable = format
-
-    def clean_tags(self, text):
-        txt = bleach.clean(text, tags=[], strip=True)
-        return txt
-
-    def clean_cite_tags(self, text):
-        txt = cite_note_pattern.sub('', text)
-        return txt
-
-    def clean(self, text):
-        txt = super(WikiwareEnParse, self).clean(text)
-        return txt
-
-    def get_summary_block(self, text):
-        txt = str_find_between_tags(text, start='="infobox',  end='="toc', case=False)
-        txt = self.unescape(txt)
-        txt = self.serialize(txt)
-        txt = str_find_between_tags(text, start='<p><b>',  end='<table', case=False)
-        return txt
-
-    def get_summary(self, text):
-        txt = self.get_summary_block(text)
-        txt = self.clean_cite_tags(txt)
-        txt = self.clean_tags(txt)
-        return txt
-
-    def parse(self):
-        """ parser content """
-
-        # print self.get_infobox(self.content)
-        print self.get_summary(self.content)
-
-
-
 
 
