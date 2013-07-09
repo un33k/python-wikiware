@@ -4,7 +4,7 @@ import re
 import HTMLParser
 import bleach
 
-from pydry.string import str_serialize_clean
+from pydry.string import str_serialize_clean, str_single_space, str_single_next_line
 from pydry.string import str_find_between_regex, str_find_between_tags
 
 import defaults
@@ -30,6 +30,8 @@ class WikiwareParseBase(object):
         txt = comma_pattern.sub(', ', txt)
         txt = dot_pattern.sub('. ', txt)
         txt = double_single_qoute_pattern.sub('"', txt)
+        txt = str_single_space(txt)
+        txt = str_single_next_line(txt)
         return txt
 
 class WikiwareAPIParse(WikiwareParseBase):
@@ -57,7 +59,6 @@ class WikiwareAPIParse(WikiwareParseBase):
 
         text = clean_markup_wiki(text)
         text = self.get_summary_block(text)
-        # text = self.serialize(text)
         text = self.clean_doubled_angled_brackets(text)
         text = self.clean_curly_brackets(text)
         text = self.clean(text)
