@@ -27,6 +27,8 @@ from patterns import *
 def prepare_markup_wiki(text):
     text = HTMLParser.HTMLParser().unescape(text)
     text = html_comment_pattern.sub('', text)
+    text = ref_pattern.sub('', text)
+    
     return text
 
 def clean_markup_wiki(text):

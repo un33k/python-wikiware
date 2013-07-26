@@ -2,7 +2,7 @@ from fetcher import WikiwareFetch
 from parser import WikiwareAPIParse
 
 if __name__ == '__main__':
-    title = 'France'
+    title = 'The Democratic Republic of Congo'
     format = 'json'
     fetcher = WikiwareFetch()
     content = fetcher.fetch_api(title=title, format=format)
