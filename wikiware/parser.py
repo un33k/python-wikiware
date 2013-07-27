@@ -25,14 +25,14 @@ class WikiwareParseBase(object):
         return txt
 
     def clean(self, text):
-        txt = text.replace("'''", '')
-        txt = long_dash_pattern.sub(' ', txt)
-        txt = comma_pattern.sub(', ', txt)
-        txt = dot_pattern.sub('. ', txt)
-        txt = double_single_qoute_pattern.sub('"', txt)
-        txt = str_single_space(txt)
-        txt = str_single_next_line(txt)
-        return txt
+        text = text.replace("'''", '')
+        text = long_dash_pattern.sub(' ', text)
+        text = comma_pattern.sub(', ', text)
+        text = dot_pattern.sub('. ', text)
+        text = double_single_qoute_pattern.sub('"', text)
+        text = str_single_space(text)
+        text = str_single_next_line(text)
+        return text.strip()
 
 class WikiwareAPIParse(WikiwareParseBase):
     """ Parse Wikipedia contents from API Calls"""
@@ -42,7 +42,6 @@ class WikiwareAPIParse(WikiwareParseBase):
         self.format = format
 
     def get_summary_block(self, text):
-        text = html_comment_pattern.sub('', text)
         start, end = 'summary_starts_here ', 'summary_ends_here '
         text = summary_start_pattern.sub(start, text)
         if start not in text:

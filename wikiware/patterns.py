@@ -72,8 +72,8 @@ long_dash_pattern = re.compile("(?mis)\–")
 # match date template
 date_template_pattern = re.compile("(?mis)\{\{[^\{\{]*\|(\d{4})\|(\d{2})\|(\d{2})\s*\}\}")
 
-
-
+# match the power of two
+power_of_two_pattern = re.compile("(?mis)<\s*sup\s*>\s*(2)\s*<\s*/\s*sup\s*>")
 
 
 

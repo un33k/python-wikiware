@@ -28,19 +28,23 @@ def prepare_markup_wiki(text):
     text = HTMLParser.HTMLParser().unescape(text)
     text = html_comment_pattern.sub('', text)
     text = ref_pattern.sub('', text)
-    
+    text = reference_number_pattern.sub('', text)
+    return text
+
+def clean_convert_markup(text):
+    text = language_translation_pattern.sub('\\1', text)
+    text = convert_pattern.sub("\\1 \\2", text)
+    text = power_of_two_pattern.sub("\\1", text)
     return text
 
 def clean_markup_wiki(text):
     text = prepare_markup_wiki(text)
-    text = language_translation_pattern.sub('\\1', text)
-    text = convert_pattern.sub("\\1 \\2", text)
     text = date_template_pattern.sub('', text)
     text = reference_number_pattern.sub('', text)
     text = ref_pattern.sub('', text)
     text = ipa_pattern.sub('', text)
     text = parentheses_pattern.sub('', text)
-
+    text = clean_convert_markup(text)
     return text
 
 def clean(self, text):
