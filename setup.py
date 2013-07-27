@@ -14,7 +14,7 @@ url = 'https://github.com/un33k/python-wikiware'
 author = 'Val Neekman'
 author_email = 'info@neekware.com'
 license = 'BSD'
-install_requires = ['requests>=1.2.3']
+install_requires = ['requests>=1.2.3', 'beautifulsoup4>=4.2.1']
 classifiers = [
     'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
