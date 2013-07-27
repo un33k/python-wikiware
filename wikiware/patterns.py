@@ -75,6 +75,30 @@ date_template_pattern = re.compile("(?mis)\{\{[^\{\{]*\|(\d{4})\|(\d{2})\|(\d{2}
 # match the power of two
 power_of_two_pattern = re.compile("(?mis)<\s*sup\s*>\s*(2)\s*<\s*/\s*sup\s*>")
 
+# match paragraphs
+paragraph_pattern = re.compile("(?mis)<\s*p\s*>(.*)<\s*/\s*p\s*>")
+
+# match cite_refs
+cite_reference_pattern = re.compile("(?mis)cite_ref.*")
+
+# match coordinates
+coordinates_pattern = re.compile("(?mis)coordinates")
+
+# match infobox
+infobox_pattern = re.compile("(?mis)infobox")
+
+# match errors
+error_pattern = re.compile("(?mis)error")
+
+# match one or more space
+single_space_pattern = re.compile('(?mis) +')
+
+# match one or more dash
+single_dash_pattern = re.compile('(?mis)-+')
+
+# match translation; i/ˈkænədə/
+translation_pattern = re.compile("(?mis)i/.*?/")
+
 
 
 

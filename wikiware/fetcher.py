@@ -20,17 +20,17 @@ class WikiwareFetch(object):
 
         self.headers = self.user_agent
 
-    def fetch_api(self, title, format="json"):
-        """ dump Wikipedia article """
+    def fetch_api_query_method(self, title):
+        """ dump Wikipedia article via query title """
 
         self.url = defaults.WIKIWARE_API_URL
         self.params = {
             'titles': title,
-            'format': format,
+            'format': 'json',
             'action': 'query',
             'prop': 'revisions',
             'rvprop': 'content',
-            'redirects': '',
+            'redirects': '1',
         }
 
         r = requests.get(self.url, params=self.params, headers=self.headers)
@@ -56,7 +56,34 @@ class WikiwareFetch(object):
             logger.error('No revisions found: Title={0}, Status={1}'.format(title, r.status_code))
         return revision
 
-    def fetch_en(self, title, printable=True):
+    def fetch_api_parse(self, title, section=None, redirect=1):
+        """ dump Wikipedia article via parse page """
+
+        self.url = defaults.WIKIWARE_API_URL
+        self.params = {
+            'page': title,
+            'format': 'json',
+            'action': 'parse',
+            'prop': 'text',
+            'redirects': redirect,
+        }
+        if not section is None:
+            self.params.update({"section": section,})
+
+        r = requests.get(self.url, params=self.params, headers=self.headers)
+        if r.status_code != requests.codes.ok:
+            logger.error('Fetch Failed: Title={0}, Status={1}'.format(title, r.status_code))
+            return ''
+
+        text = r.json()
+        try:
+            text = text['parse']['text']['*']
+        except:
+            logger.error('No text returned: Title={0}, Status={1}'.format(title, r.status_code))
+            return ''
+        return text
+
+    def fetch_en_printable_method(self, title, printable=True):
         """ dump Wikipedia article in HTML """
 
         self.url = defaults.WIKIWARE_EN_URL

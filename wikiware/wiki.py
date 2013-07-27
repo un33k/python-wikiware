@@ -1,18 +1,16 @@
+# -*- coding: utf-8 -*-
+
+import re
+
 from fetcher import WikiwareFetch
 from parser import WikiwareAPIParse
 
-if __name__ == '__main__':
-    # title = 'The Democratic Republic of Congo'
-    # title = 'The United States'
-    # title = 'Hong Kong'
-    # title = 'The United Kingdom'
-    title = 'Antarctica'
-    format = 'json'
+def get_wiki_summary(title):
     fetcher = WikiwareFetch()
-    content = fetcher.fetch_api(title=title, format=format)
-    parser = WikiwareAPIParse(content=content, format=format)
-    text = parser.parse()
+    html = fetcher.fetch_api_parse(title=title, section="0")
+    parser = WikiwareAPIParse(content=html)
+    summary = parser.get_summary()
+    return summary
 
-    print "\n\n"
-    print text
-    print "\n\n"
+
+
