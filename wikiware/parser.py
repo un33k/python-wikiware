@@ -33,11 +33,11 @@ class WikiwareAPIParse(object):
         return text
 
     def _clean_punctuations(self, text):
+        text = single_dash_pattern.sub('-', text)
+        text = translation_pattern.sub('', text)
         text = long_dash_pattern.sub(' ', text)
         text = comma_pattern.sub(', ', text)
         text = dot_pattern.sub('. ', text)
-        text = single_dash_pattern.sub('-', text)
-        text = translation_pattern.sub('', text)
 
         text = single_space_pattern.sub(' ', text)
         return text

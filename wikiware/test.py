@@ -17,8 +17,8 @@ if __name__ == '__main__':
         # 'Ghana',
         # 'Iran',
         # 'Jamaica',
-        'Canada',
-        'Toronto',
+        # 'Canada',
+        'Botswana',
     ]
     print "\n\n"
     for title in titles:

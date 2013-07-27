@@ -97,7 +97,7 @@ single_space_pattern = re.compile('(?mis) +')
 single_dash_pattern = re.compile('(?mis)-+')
 
 # match translation; i/ˈkænədə/
-translation_pattern = re.compile("(?mis)i/.*?/")
+translation_pattern = re.compile("(?mis)i/.*?/|/.*?/")
 
 
 
