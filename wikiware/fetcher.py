@@ -1,10 +1,11 @@
 import sys
 import requests
 import logging
-
+import urllib
 import defaults
 
-logging.basicConfig(filename='wikiware.log',level=logging.DEBUG)
+if defaults.DEBUG:
+    logging.basicConfig(filename='wikiware.log',level=logging.DEBUG)
 
 logger = logging.getLogger('wikiware-fetcher')
 
@@ -25,7 +26,7 @@ class WikiwareFetch(object):
 
         self.url = defaults.WIKIWARE_API_URL
         self.params = {
-            'titles': title,
+            'titles': urllib.unquote_plus(title),
             'format': 'json',
             'action': 'query',
             'prop': 'revisions',
@@ -61,7 +62,7 @@ class WikiwareFetch(object):
 
         self.url = defaults.WIKIWARE_API_URL
         self.params = {
-            'page': title,
+            'page': urllib.unquote_plus(title),
             'format': 'json',
             'action': 'parse',
             'prop': 'text',
@@ -88,7 +89,7 @@ class WikiwareFetch(object):
 
         self.url = defaults.WIKIWARE_EN_URL
         self.params = {
-            'title': title,
+            'title': urllib.unquote_plus(title),
             'printable': 'yes' if printable else 'no',
         }
         r = requests.get(self.url, params=self.params, headers=self.headers)

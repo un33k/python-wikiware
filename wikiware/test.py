@@ -1,9 +1,6 @@
-# import re,
 
-# from fetcher import WikiwareFetch
-# from parser import WikiwareAPIParse
-# from bs4 import BeautifulSoup as bfs may also refer to:
-
+import defaults
+defaults.DEBUG = True
 from wiki import *
 
 if __name__ == '__main__':
@@ -17,10 +14,11 @@ if __name__ == '__main__':
         # 'Ghana',
         # 'Iran',
         # 'Jamaica',
-        'Canada',
+        # 'Canada',
         # 'Botswana',
         # 'Netherlands',
         # 'Jersey',
+        'Georgia_%28country%29',
     ]
     print "\n\n"
     for title in titles:
