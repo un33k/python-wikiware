@@ -20,23 +20,23 @@ class WikiwareAPIParse(object):
         self.soup = BeautifulSoup(self.html)
 
     def _purge_redundant_nodes(self, soup):
-        goners = soup.findAll(id=coordinates_pattern)
-        goners += soup.findAll(id=cite_reference_pattern)
-        goners += soup.findAll(attrs={'class': error_pattern})
-        goners += soup.findAll('table')
+        goners = soup.find_all(id=pattern_coordinates)
+        goners += soup.find_all(id=pattern_cite_reference)
+        goners += soup.find_all(attrs={'class': pattern_error})
+        goners += soup.find_all('table')
         for node in goners:
             node.extract()
         return soup
 
     def _clean_punctuations(self, text):
-        text = single_dash_pattern.sub('-', text)
-        text = translation_pattern.sub('', text)
-        text = long_dash_pattern.sub(' ', text)
-        text = comma_pattern.sub(', ', text)
-        text = dot_pattern.sub('. ', text)
-        text = semicolon_pattern.sub('; ', text)
+        text = pattern_single_dash.sub('-', text)
+        text = pattern_translation.sub('', text)
+        text = pattern_long_dash.sub(' ', text)
+        text = pattern_comma.sub(', ', text)
+        text = pattern_dot.sub('. ', text)
+        text = pattern_semicolon.sub('; ', text)
 
-        text = single_space_pattern.sub(' ', text)
+        text = pattern_single_space.sub(' ', text)
         return text
 
     def _remove_duplicates(self, text):
@@ -52,7 +52,7 @@ class WikiwareAPIParse(object):
         return text
 
     def _remove_extras(self, text):
-        text = parentheses_pattern.sub('', parentheses_pattern.sub('', text))
+        text = pattern_parentheses.sub('', pattern_parentheses.sub('', text))
         replace = ['(', ')', '{', '}', '[', ']',]
         for r in replace:
             text = text.replace(r, ' ')
@@ -65,21 +65,29 @@ class WikiwareAPIParse(object):
         text = self._remove_duplicates(text)
         return text
 
+    def _is_summary_tag(self, tag):
+        return tag.name == 'p' and not tag.has_attr('class') and not tag.has_attr('id')
+
     def _validate_query(self, text):
         if defaults.WIKIWARE_QUERY_NOT_FOUND_TEXT in text:
             return ''
         else:
             return text
 
+    def get_summary_paragraphs(self, soup):
+        summary_paragraphs = []
+        soup = self._purge_redundant_nodes(soup)
+        paragraphs = soup.find_all(self._is_summary_tag)
+        for p in paragraphs:
+            summary_paragraphs.append(self._cleanup(p.get_text()))
+        return summary_paragraphs
+
     def get_summary(self, force=False):
         if hasattr(self, 'summary') and self.summary and not force:
             return self.summary
         self.summary = ''
-        soup = self._purge_redundant_nodes(self.soup)
-        paragraphs = paragraph_pattern.findall(str(soup.body))
-        for p in paragraphs:
-            self.summary += BeautifulSoup(p).get_text()
-        self.summary = self._cleanup(self.summary)
+        paragraphs = self.get_summary_paragraphs(self.soup)
+        self.summary = "\n".join(paragraphs)
         self.summary = self._validate_query(self.summary)
         return self.summary
 
