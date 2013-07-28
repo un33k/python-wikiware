@@ -2,7 +2,7 @@
 
 # from fetcher import WikiwareFetch
 # from parser import WikiwareAPIParse
-# from bs4 import BeautifulSoup as bfs
+# from bs4 import BeautifulSoup as bfs may also refer to:
 
 from wiki import *
 
@@ -18,7 +18,8 @@ if __name__ == '__main__':
         # 'Iran',
         # 'Jamaica',
         # 'Canada',
-        'Botswana',
+        # 'Botswana',
+        'United States',
     ]
     print "\n\n"
     for title in titles:

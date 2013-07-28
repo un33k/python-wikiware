@@ -5,7 +5,6 @@ import HTMLParser
 from bs4 import BeautifulSoup
 
 from patterns import *
-from utils import clean_markup_wiki
 
 import defaults
 
@@ -40,12 +39,19 @@ class WikiwareAPIParse(object):
         text = dot_pattern.sub('. ', text)
 
         text = single_space_pattern.sub(' ', text)
+        text = text.strip().strip('\n').strip('\t')
         return text
 
     def _cleanup(self, text):
         text = self._remove_extra_parentheses(text)
         text = self._clean_punctuations(text)
         return text
+
+    def _validate_query(self, text):
+        if defaults.WIKIWARE_QUERY_NOT_FOUND_TEXT in text:
+            return ''
+        else:
+            return text
 
     def get_summary(self, force=False):
         if hasattr(self, 'summary') and self.summary and not force:
@@ -56,6 +62,7 @@ class WikiwareAPIParse(object):
         for p in paragraphs:
             self.summary += BeautifulSoup(p).get_text()
         self.summary = self._cleanup(self.summary)
+        self.summary = self._validate_query(self.summary)
         return self.summary
 
 
