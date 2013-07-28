@@ -4,9 +4,8 @@ import logging
 import urllib
 import defaults
 
-if defaults.DEBUG:
-    logging.basicConfig(filename='wikiware.log',level=logging.DEBUG)
-
+log_level = logging.DEBUG if defaults.DEBUG else logging.ERROR
+logging.basicConfig(filename='wikiware.log',level=log_level)
 logger = logging.getLogger('wikiware-fetcher')
 
 class WikiwareFetch(object):
