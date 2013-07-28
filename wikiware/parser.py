@@ -19,15 +19,6 @@ class WikiwareAPIParse(object):
         self.html = HTMLParser.HTMLParser().unescape(content)
         self.soup = BeautifulSoup(self.html)
 
-    def _purge_redundant_nodes(self, soup):
-        goners = soup.find_all(id=pattern_coordinates)
-        goners += soup.find_all(id=pattern_cite_reference)
-        goners += soup.find_all(attrs={'class': pattern_error})
-        goners += soup.find_all('table')
-        for node in goners:
-            node.extract()
-        return soup
-
     def _clean_punctuations(self, text):
         text = pattern_single_dash.sub('-', text)
         text = pattern_translation.sub('', text)
@@ -74,9 +65,18 @@ class WikiwareAPIParse(object):
         else:
             return text
 
+    def _purge_non_summary_nodes(self, soup):
+        goners = soup.find_all(id=pattern_coordinates)
+        goners += soup.find_all(id=pattern_cite_reference)
+        goners += soup.find_all(attrs={'class': pattern_error})
+        goners += soup.find_all('table')
+        for node in goners:
+            node.extract()
+        return soup
+
     def get_summary_paragraphs(self, soup):
         summary_paragraphs = []
-        soup = self._purge_redundant_nodes(soup)
+        soup = self._purge_non_summary_nodes(soup)
         paragraphs = soup.find_all(self._is_summary_tag)
         for p in paragraphs:
             summary_paragraphs.append(self._cleanup(p.get_text()))
