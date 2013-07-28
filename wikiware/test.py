@@ -17,7 +17,7 @@ if __name__ == '__main__':
         # 'Ghana',
         # 'Iran',
         # 'Jamaica',
-        # 'Canada',
+        'Canada',
         # 'Botswana',
         # 'Netherlands',
         'Jersey',

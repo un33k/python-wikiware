@@ -28,10 +28,6 @@ class WikiwareAPIParse(object):
             node.extract()
         return soup
 
-    def _remove_extra_parentheses(self, text):
-        text = parentheses_pattern.sub('', parentheses_pattern.sub('', text))
-        return text
-
     def _clean_punctuations(self, text):
         text = single_dash_pattern.sub('-', text)
         text = translation_pattern.sub('', text)
@@ -43,6 +39,12 @@ class WikiwareAPIParse(object):
         text = single_space_pattern.sub(' ', text)
         return text
 
+    def _remove_duplicates(self, text):
+        dups = ['\t', '\n', '\r', ' ', '-', ':', ';', '_', '-', ',',]
+        for d in dups:
+            text = re.sub('(?mis)%s{1,}' % d, d, text)
+        return text
+
     def _strip_extras(self, text):
         strip = ['\t', '\n', '\r\n', '\r', ' ',]
         for s in strip:
@@ -50,16 +52,17 @@ class WikiwareAPIParse(object):
         return text
 
     def _remove_extras(self, text):
+        text = parentheses_pattern.sub('', parentheses_pattern.sub('', text))
         replace = ['(', ')', '{', '}', '[', ']',]
         for r in replace:
             text = text.replace(r, ' ')
         return text
     
     def _cleanup(self, text):
-        text = self._remove_extra_parentheses(text)
         text = self._remove_extras(text)
         text = self._clean_punctuations(text)
         text = self._strip_extras(text)
+        text = self._remove_duplicates(text)
         return text
 
     def _validate_query(self, text):
