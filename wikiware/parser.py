@@ -5,6 +5,7 @@ import HTMLParser
 from bs4 import BeautifulSoup
 
 from patterns import *
+from utils import *
 
 import defaults
 
@@ -37,14 +38,28 @@ class WikiwareAPIParse(object):
         text = long_dash_pattern.sub(' ', text)
         text = comma_pattern.sub(', ', text)
         text = dot_pattern.sub('. ', text)
+        text = semicolon_pattern.sub('; ', text)
 
         text = single_space_pattern.sub(' ', text)
-        text = text.strip().strip('\n').strip('\t')
         return text
 
+    def _strip_extras(self, text):
+        strip = ['\t', '\n', '\r\n', '\r', ' ',]
+        for s in strip:
+            text = text.strip(s)
+        return text
+
+    def _remove_extras(self, text):
+        replace = ['(', ')', '{', '}', '[', ']',]
+        for r in replace:
+            text = text.replace(r, ' ')
+        return text
+    
     def _cleanup(self, text):
         text = self._remove_extra_parentheses(text)
+        text = self._remove_extras(text)
         text = self._clean_punctuations(text)
+        text = self._strip_extras(text)
         return text
 
     def _validate_query(self, text):

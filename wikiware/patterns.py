@@ -35,6 +35,9 @@ comma_pattern = re.compile("(?mis) {1,}\,")
 # match space before dot " ." or "       ."
 dot_pattern = re.compile("(?mis) {1,}\.")
 
+# match space before ; " ;" or "       ;"
+semicolon_pattern = re.compile("(?mis) {1,}\;")
+
 # match the start of the infobox
 infobox_start_pattern = re.compile("(?mis)\{\{\s*infobox", re.I)
 
@@ -76,7 +79,7 @@ date_template_pattern = re.compile("(?mis)\{\{[^\{\{]*\|(\d{4})\|(\d{2})\|(\d{2}
 power_of_two_pattern = re.compile("(?mis)<\s*sup\s*>\s*(2)\s*<\s*/\s*sup\s*>")
 
 # match paragraphs
-paragraph_pattern = re.compile("(?mis)<\s*p\s*>(.*)<\s*/\s*p\s*>")
+paragraph_pattern = re.compile("(?mis)<\s*p\s*>(.*?)<\s*/\s*p\s*>")
 
 # match cite_refs
 cite_reference_pattern = re.compile("(?mis)cite_ref.*")
@@ -91,10 +94,13 @@ infobox_pattern = re.compile("(?mis)infobox")
 error_pattern = re.compile("(?mis)error")
 
 # match one or more space
-single_space_pattern = re.compile('(?mis) +')
+single_space_pattern = re.compile('(?mis)\s+|\t+')
 
 # match one or more dash
 single_dash_pattern = re.compile('(?mis)-+')
+
+# match one or more ;
+single_semicolon_pattern = re.compile('(?mis);+')
 
 # match translation; i/ˈkænədə/
 translation_pattern = re.compile("(?mis)i/.*?/|/.*?/")
