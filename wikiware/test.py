@@ -19,7 +19,7 @@ if __name__ == '__main__':
         # 'Netherlands',
         # 'Jersey',
         # 'Georgia_%28country%29',
-        'Darfur',
+        'United State',
     ]
     print "\n\n"
     for title in titles:

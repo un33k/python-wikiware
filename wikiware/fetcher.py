@@ -11,7 +11,7 @@ logger = logging.getLogger('wikiware-fetcher')
 class WikiwareFetch(object):
     """ Fetch content from Wikipedia """
 
-    def __init__(self):
+    def __init__(self, timeout=defaults.WIKIWARE_QUERY_CONNECTION_TIMEOUT_SECONDS):
         """ Mediawiki API query """
 
         self.user_agent = {
@@ -19,10 +19,12 @@ class WikiwareFetch(object):
         }
 
         self.headers = self.user_agent
+        self.timeout = timeout
 
     def fetch_api_query_method(self, title):
         """ dump Wikipedia article via query title """
 
+        content = None
         self.url = defaults.WIKIWARE_API_URL
         self.params = {
             'titles': urllib.unquote_plus(title),
@@ -33,32 +35,33 @@ class WikiwareFetch(object):
             'redirects': '1',
         }
 
-        r = requests.get(self.url, params=self.params, headers=self.headers)
-        if r.status_code != requests.codes.ok:
+        r = self.make_get_request(self.url, params=self.params, headers=self.headers, timeout=self.timeout)
+        if r and r.status_code != requests.codes.ok:
             logger.error('Fetch Failed: Title={0}, Status={1}'.format(title, r.status_code))
-            return ''
+            return content
 
         text = r.json()
         try:
             pages = text['query']['pages']
         except:
             logger.error('No pages returned: Title={0}, Status={1}'.format(title, r.status_code))
-            return ''
-        revision = ''
+            return content
+
         for page in pages:
             try:
-                revision = pages[page]['revisions'][0]['*']
+                content = pages[page]['revisions'][0]['*']
             except:
                 pass
             break
 
-        if not revision:
+        if content is None:
             logger.error('No revisions found: Title={0}, Status={1}'.format(title, r.status_code))
-        return revision
+        return content
 
     def fetch_api_parse(self, title, section=None, redirect=1):
         """ dump Wikipedia article via parse page """
 
+        content = None
         self.url = defaults.WIKIWARE_API_URL
         self.params = {
             'page': urllib.unquote_plus(title),
@@ -70,18 +73,18 @@ class WikiwareFetch(object):
         if not section is None:
             self.params.update({"section": section,})
 
-        r = requests.get(self.url, params=self.params, headers=self.headers)
-        if r.status_code != requests.codes.ok:
+        r = self.make_get_request(self.url, params=self.params, headers=self.headers, timeout=self.timeout)
+        if r and r.status_code != requests.codes.ok:
             logger.error('Fetch Failed: Title={0}, Status={1}'.format(title, r.status_code))
-            return ''
+            return content
 
         text = r.json()
         try:
-            text = text['parse']['text']['*']
+            content = text['parse']['text']['*']
         except:
             logger.error('No text returned: Title={0}, Status={1}'.format(title, r.status_code))
-            return ''
-        return text
+            return content
+        return content
 
     def fetch_en_printable_method(self, title, printable=True):
         """ dump Wikipedia article in HTML """
@@ -91,8 +94,24 @@ class WikiwareFetch(object):
             'title': urllib.unquote_plus(title),
             'printable': 'yes' if printable else 'no',
         }
-        r = requests.get(self.url, params=self.params, headers=self.headers)
-        return r.text
+        r = make_get_request(self.url, params=self.params, headers=self.headers, timeout=self.timeout)
+        if r and r.text:
+            return r.text
+        return None
+
+
+    def make_get_request(self, url, params, headers, timeout):
+        """ Make the actual request """
+
+        try:
+            r = requests.get(self.url, params=self.params, headers=self.headers, timeout=timeout)
+        except requests.exceptions.Timeout, e:
+            logger.warning('Request Timeout: {}'.format(e))
+            return None
+        except requests.exceptions.ConnectionError, e:
+            logger.error('Connection Error: {}'.format(e))
+            raise
+        return r
 
 
 
