@@ -40,9 +40,12 @@ Changelog
 =========
 
 
+0.0.2
+-----
+* Parse enhancements
+
 0.0.1
 -----
-
 * Initial release
 
 

@@ -80,42 +80,72 @@ class WikiwareAPIParseBase(object):
         else:
             return text
 
+    def _purge_undesired_nodes(self, soup):
+        """ Remove any undesired html node from the nodes """
+
+        undesired = soup.find_all(id=pattern_cite_reference)
+        undesired += soup.find_all(attrs={'class': pattern_error})
+        for node in undesired:
+            node.extract()
+        return soup
+
+    def _is(self, node, kind):
+        """ Returns True if node is a right `kind` """
+
+        return getattr(node, 'name', '').lower() == kind.lower()
+
+    def _class_contains(self, node, text):
+        """ Returns True if node has class that contains text """
+
+        classes = node.get('class', [])
+        for c in classes:
+            if text.lower() in c.lower():
+                return True
+        return False
+
+    def _is_table_of_content(self, node):
+        """ Returns True if node is the table of content <div class='toc'>...</div> """
+
+        return self._is(node, 'div') and self._class_contains(node, 'toc')
+
+    def _is_infobox_table(self, node):
+        """ Returns True if node is the infobox """
+
+        return self._is(node, 'table') and self._class_contains(node, 'infobox')
+
 
 class WikiwareAPIParseSummary(WikiwareAPIParseBase):
     """ Parse Wikipedia contents for the Summary section """
 
-    def _is_summary_tag(self, tag):
+    def _is_summary_tag(self, node):
         """ Summary tag is a <p> some text </p> pattern """
 
-        return tag.name == 'p' and not tag.has_attr('class') and not tag.has_attr('id')
-
-    def _purge_non_summary_nodes(self, soup):
-        """ Remove any non-summary html node from the dom tree """
-
-        goners = soup.find_all(id=pattern_coordinates)
-        goners += soup.find_all(id=pattern_cite_reference)
-        goners += soup.find_all(attrs={'class': pattern_error})
-        goners += soup.find_all('table')
-        for node in goners:
-            node.extract()
-        return soup
+        return self._is(node, 'p') and not (node.has_attr('class') or node.has_attr('id'))
 
     def _get_summary_paragraphs(self, soup):
-        """ Returns the text for all the summary pharagraphs """
+        """ Return summary paragraphs of an article """
 
         summary_paragraphs = []
-        soup = self._purge_non_summary_nodes(soup)
-        paragraphs = soup.find_all(self._is_summary_tag)
-        for p in paragraphs:
-            summary_paragraphs.append(self._cleanup(p.get_text()))
+        nextNode = soup.find('table', attrs={'class': pattern_infobox})
+        while nextNode:
+            nextNode = nextNode.findNextSibling()
+            if not nextNode or self._is_table_of_content(nextNode):
+                break
+            elif self._is_summary_tag(nextNode):
+                nextNode = self._purge_undesired_nodes(nextNode)
+                p_cleaned = self._cleanup(nextNode.get_text())
+                if p_cleaned and len(p_cleaned) >= defaults.WIKIWARE_PARAGRAPH_MIN_CHARACTERS:
+                    summary_paragraphs.append(p_cleaned)
         return summary_paragraphs
 
     def get_summary(self, content):
         """ Returns the summary for the given wikipedia content """
 
+        summary = None
         self._set_content(content)
         paragraphs = self._get_summary_paragraphs(self.soup)
-        summary = self._validate_query("\n".join(paragraphs))
+        if paragraphs:
+            summary = self._validate_query("\n".join(paragraphs))
         return summary
 
 

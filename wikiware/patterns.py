@@ -74,6 +74,8 @@ pattern_single_semicolon = re.compile('(?mis);+')
 # match translation; i/ˈkænədə/
 pattern_translation = re.compile("(?mis)i/.*?/|/.*?/")
 
+# match next line, caraige returns, tabs, etc.
+pattern_single_line = re.compile("\r\n|\n|\r|\t")
 
 
 
