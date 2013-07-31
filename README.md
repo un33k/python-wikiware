@@ -25,7 +25,8 @@ How to install
 
 How to use
 =================
-TBD
+from wiki import *
+summary = get_wiki_summary("some title")
 
 
 Running the tests
