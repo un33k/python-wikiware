@@ -77,5 +77,9 @@ pattern_translation = re.compile("(?mis)i/.*?/|/.*?/")
 # match next line, caraige returns, tabs, etc.
 pattern_single_line = re.compile("\r\n|\n|\r|\t")
 
+# match coordinates
+pattern_coordinates = re.compile("(?mis)coordinates.*")
+
+
 
 

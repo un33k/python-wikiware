@@ -1,7 +1,7 @@
 
 import defaults
 defaults.DEBUG = True
-from wiki import *
+from geo import *
 
 if __name__ == '__main__':
     titles = [
@@ -20,6 +20,8 @@ if __name__ == '__main__':
         'Jersey',
         'Georgia_%28country%29',
         'United State',
+        'Nalbandyan,_Armenia',
+        'Netherland',
     ]
     print "\n\n============"
     for title in titles:
